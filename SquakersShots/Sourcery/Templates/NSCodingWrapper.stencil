@@ -1,0 +1,41 @@
+{% for type in types.structs|annotated:"NSCodingWrapper" %}
+{% set objectForCoding %}{{ type.name|lowerFirstWord }}{% endset %}
+// sourcery:file:Generated/{{ type.name }}+NSCodingWrapper
+import Foundation
+
+final class {{ type.name }}Coding: NSObject, NSCoding {
+
+    fileprivate let {{ objectForCoding }}: {{ type.name }}
+
+    init({{ objectForCoding }}: {{ type.name }}) {
+        self.{{ objectForCoding }} = {{ objectForCoding }}
+        super.init()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        guard {% for variable in type.storedVariables where variable.typeName.name != "Bool" and variable.typeName.name != "Int" %}let {{ variable.name }} = aDecoder.decodeObject(forKey: "{{ variable.name }}") as? {{variable.typeName.name }}{% if forloop.last %} else { return nil }{% else %},{% endif %}{% endfor %}
+        {{ objectForCoding }} = {{ type.name }}({% for variable in type.storedVariables %}{{ variable.name }}: {% if variable.typeName.name == "Bool" %}aDecoder.decodeBool(forKey: "{{ variable.name }}"){% elif variable.typeName.name == "Int" %}aDecoder.decodeInteger(forKey: "{{variable.name }}"){% else %}{{ variable.name }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %})
+        super.init()
+    }
+
+    func encode(with aCoder: NSCoder) {
+        {% for variable in type.storedVariables %}aCoder.encode({{ objectForCoding }}.{{ variable.name }}, forKey: "{{ variable.name }}")
+        {% endfor %}
+    }
+}
+
+extension {{ type.name }}Coding: StructRepresentable {
+    var `struct`: {{ type.name }} {
+        return {{ objectForCoding }}
+    }
+}
+
+extension {{ type.name }}: Encoded {
+    var encoder: {{ type.name }}Coding {
+        return {{ type.name }}Coding({{ objectForCoding }}: self)
+    }
+}
+
+// sourcery:end
+{% endfor %}
+

@@ -1,0 +1,22 @@
+{% for class in types.classes|annotated:"CoreDataStruct" %}
+{% set structName %}{{ class.name|replace:"CoreData",""}}{% endset %}
+// sourcery:file:Generated/{{ structName }}+CoreDataStruct
+extension {{ structName }}: CoreDataRepresentable {
+    var managedObject: {{ class.name }} {
+        let {{ class.name|lowerFirstWord }} = {{ class.name }}(context: ShotsProvider.container.viewContext)
+        {% for variable in class.variables where variable.readAccess == "public" %}
+        {{ class.name|lowerFirstWord }}.{{ variable.name }} = {{ variable.typeName.name }}({{ variable.name }})
+{% endfor %}
+
+        return {{ class.name|lowerFirstWord }}
+    }
+}
+
+extension {{ class.name }}: StructRepresentable {
+    var `struct`: {{ structName }} {
+{% for struct in types.structs where struct.name == structName %}
+        return {{ struct.name }}({% for variable in struct.storedVariables %}{{ variable.name }}: {{ variable.typeName.name }}({{ variable.name }}){% if not forloop.last %}, {% endif %}{% endfor %}){% endfor %}
+    }
+}
+// sourcery:end
+{% endfor %}
