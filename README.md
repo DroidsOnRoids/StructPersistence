@@ -1,10 +1,34 @@
-# Structs for models
-
 This is a finished project described in blogpost _here_. For more details, context, motivation and more please check it out!
 
-Used pods: Realm, Haneke.
-Used library: [Sourcery](https://github.com/krzysztofzablocki/Sourcery) by [Krzysztof Zablocki](http://merowing.info/).
+Used pods: 
+- [Realm](https://github.com/realm/realm-cocoa) 
+- [HanekeSwift](https://github.com/Haneke/HanekeSwift)
 
+Used library: 
+- [Sourcery](https://github.com/krzysztofzablocki/Sourcery) by [Krzysztof Zablocki](http://merowing.info/).
+
+# Usage 
+
+You declare what template you want to apply on a struct with //sourcery: templateOne, templateTwo, etc:
+
+```
+//sourcery: NSCodingWrapper, RealmStruct, CoreDataStruct
+struct Shot {
+    let id: Int
+    let url: String
+    let likes: Int
+    let comments: Int
+    let buckets: Int
+    let views: Int
+}
+```
+
+To launch codegen you need to run Sourcery via:
+```
+$ ./sourcery --sources <sources path> --templates <templates path> --output <output path> [--args arg1=value,arg2]
+```
+
+For more info please check out the [Sourcery repo.](https://github.com/krzysztofzablocki/Sourcery)
 
 # Sidenotes
 
