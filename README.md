@@ -1,4 +1,4 @@
-This is a finished project described in blogpost _here_. For more details, context, motivation and more please check it out!
+This is a finished project described in blogpost [here](https://www.thedroidsonroids.com/blog/ios/persisting-struct-with-sourcery-magic/). For more details, context, motivation and more please check it out!
 
 Used pods: 
 - [Realm](https://github.com/realm/realm-cocoa) 
